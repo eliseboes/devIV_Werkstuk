@@ -8,17 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pmcp/ehbdev4werkstuk.git"
+    "url": "git+https://github.com/eliseboes/devIV_Werkstuk.git"
   },
   "keywords": [
     "practice"
   ],
-  "author": "Maarten Lauwaert",
+  "author": "Elise Boes",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/pmcp/ehbdev4werkstuk/issues"
+    "url": "https://github.com/eliseboes/devIV_Werkstuk.git/issues"
   },
-  "homepage": "https://github.com/pmcp/ehbdev4werkstuk#readme",
+  "homepage": "https://github.com/eliseboes/devIV_Werkstuk.git#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0"
