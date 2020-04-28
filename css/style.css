@@ -10,6 +10,11 @@ main{
     margin: 50px auto;
 }
 
+p{
+    font-size: 14px;
+    font-weight: normal;
+}
+
 header{
     padding: 20px 0 5px 0;
     background-image: url('/img/banner_edit.jpg');
@@ -49,4 +54,32 @@ h2{
 
 #tags{
     margin-top: 30px;
+}
+
+nav ul li {
+    width: 15%;
+    float: left;
+    list-style: none;
+    background-color: #000;
+    color: #fff;
+    padding: 8px;
+    margin: 10px 10px 0px 0px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#results{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#results figure{
+    width: 31%;
+    margin-top: 30px;
+}
+
+figure img{
+    width: 100%;
 }

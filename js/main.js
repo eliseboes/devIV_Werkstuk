@@ -4,7 +4,9 @@
      const entryList = new Entrylist();
      await entryList.fetch();
      entryList.getGenres();
-     entryList.sortGenres();
+    // entryList.sortGenres();
+    // entryList.showGenres();
+    entryList.showEntries();
  }
 
  class Entrylist {
@@ -12,7 +14,7 @@
      constructor() {
          this.resultElement = document.getElementById('results');
          this.genreTagElement = document.getElementById('genretags');
-         this.genreTagElement = document.getElementById('doelgroepentags');
+         this.doelgroepenTagElement = document.getElementById('doelgroepentags');
          this.entries = [];
          this.genres = [];
          this.doelgroepen = [];
@@ -29,47 +31,59 @@
          } catch (err) {
              console.log(err)
              throw new Error(`could not fetch data ${err}`);
-            // showError(err.message);
+             // showError(err.message);
          } finally {}
      }
      getGenres() {
          //Itereren over objecten, haal de beschikbaar genres op en push naar taglist genres
-         //All words have to be capitalized in order to count them correctly
-         this.entries.forEach(item =>{
-                this.genres.push(item['genre-v2'])
-         }
-          );
+         this.entries.forEach(item => {
+            if(item.genre != undefined){
+                //Tolowercase en trim gebruikt om de genres die verkeerd geschreven zijn toch te kunnen 'reducen'
+                this.genres.push(new Genre(item['genre'].toLowerCase().trim()))
+            }
+            console.log(item)
+         });
      }
      sortGenres() {
-        this.genres = this.genres.reduce(groupBy, {})
-
-        function groupBy(acc, genre) {
-            const count = acc[genre] || 0;
-            return {
-                ...acc,
-                [genre]: count + 1
-            }
-        }
-        console.log(this.genres)
+         //reduce de genres om de labels en aantallen te verkrijgen
+         this.genreNames = this.genreNames.reduce(groupBy, {})
+         function groupBy(acc, genre) {
+             const count = acc[genre] || 0;
+             return {
+                 ...acc,
+                 [genre]: count + 1
+             }
+         }
      }
      showGenres() {
-         const genreNavElement = document.getElementById('genrenav');
-         genres.forEach(genre => {
-             console.log(genre)
+         this.genreNames.forEach(genre => 
+            this.genreTagElement.insertAdjacentHTML(`beforeend`, `<li class='${genre.code}'>${genre.name}</li>`)
+        )
+     }
+     showEntries(){
+         this.entries.forEach(entry =>{
+             console.log(entry)
+             let videoImg = entry.thumbnail.url;
+              this.resultElement.insertAdjacentHTML('beforeend', `<figure>
+              <img src=${videoImg}>
+                <figcaption>
+                    <h3>${entry.name}</3>
+                    <p>${entry.excerpt}</p>
+                    <p>${entry['video-length']}</p>
+                </figcaption>
+              </figure>`)
          })
      }
+     
  }
-
-//  class Genre {
-//     constructor(country) {
-//       this.name = entry['genre'];
-//       this.code = entry['genre-v2'];
-//     }
-//     get htmlString() {
-//       return `
-// <li>${this.name}</li>
-//       `
-//     }
-//   }
+ class Genre {
+     constructor(entry) {
+         this.name = entry['genre'];
+         this.code = entry['genre-v2'];
+     }
+     get htmlString() {
+         return `<li class="${this.code}${this.name}</li>`
+     }
+ }
 
  init();
