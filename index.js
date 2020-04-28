@@ -19,11 +19,8 @@ let settings = {
   fetch(apiUrl+'/items', settings)
   .then(res => res.json())
   .then((json) => {
-	console.log(json.items)
     console.log(`Got the response, there are ${json.items.length} entries`)
   });
-
-
 
 var port = 8000;
 var serverUrl = "127.0.0.1";
