@@ -118,3 +118,11 @@ figure img{
 #tags h3{
     margin-top: 30px;
 }
+
+.hidden{
+    display: none;
+}
+
+.visible{
+    display: block;
+}
