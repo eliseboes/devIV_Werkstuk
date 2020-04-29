@@ -84,7 +84,7 @@ nav ul li {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top: 15%;
+    margin-top: 30px;
 }
 
 #results figure{
@@ -113,4 +113,8 @@ figure img{
 
 .hidden{
     display: none;
+}
+
+#tags h3{
+    margin-top: 30px;
 }
