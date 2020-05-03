@@ -1,6 +1,7 @@
 'Use strict'
 $(function () {
     let entries;
+    let sortedEntries;
     //let selectedGenres = ["comedy", "dans", "theater", "muziektheater", "multidisciplinair", "circus", "opera", "concert", "figurentheater"];
     let selectedGenres = [];
     let selectedDoelgroepen = [];
@@ -17,7 +18,8 @@ $(function () {
             const data = await response.json()
             //Sla entries op in globale variabele
             entries = data.items;
-            getGenres();
+            sortedEntries = entries;
+            countGenres();
             showTags(genres);
             showResults();
         } catch (err) {
@@ -32,7 +34,7 @@ $(function () {
         const genreTagElement = document.getElementById('genretags');
         const doelgroepenTagElement = document.getElementById('doelgroepentags');
         //Loop over de 'key' en 'value' pairs van de gesorteerde lijst
-        //Insert HTML elementen met properties uit de entry objecten
+        //Insert HTML elementen met properties uit de entry objecten (geselecteerde genre en aantal)
         Object.entries(sortedGenres).forEach(genre =>
             genreTagElement.insertAdjacentHTML('beforeend', `<li class='genre ${genre[0]} tag'>
             ${genre[0]}
@@ -54,7 +56,7 @@ $(function () {
     let showResults = () => {
         $('#results').empty();
         let resultElement = document.getElementById('results');
-        entries.forEach(entry => {
+        sortedEntries.forEach(entry => {
             selectedGenres.forEach(genre => {
                 if (entry.genre != undefined && entry.genre.toLowerCase().trim() == genre) {
                     let videoImg = entry.thumbnail.url;
@@ -96,13 +98,13 @@ $(function () {
             //Update de resulten en tags wanneer een tag geselecteerd of gedeselecteerd wordt
             filterDoelgroepen();
             showResults();
-            getGenres(genres);
+            countGenres();
              updateCount();
            // showTags(genres);
         })
     }
     
-    let filterDoelgroepen = () => {
+    async function filterDoelgroepen(){
         const isFamily = entry => entry['age'] != undefined && entry['age'].replace('+', '') < 12;
         const getFamily = entries => (
             entries.filter(isFamily)
@@ -111,30 +113,28 @@ $(function () {
         const getAdult = entries => (
             entries.filter(isAdult)
         )
-        if (selectedDoelgroepen.includes('iedereen')) {
-            entries = getFamily(entries)
-        } else if (selectedDoelgroepen.includes('volwassenen')) {
-            entries = getFamily(entries);
+        if (selectedDoelgroepen.length == 1 && selectedDoelgroepen.includes('iedereen')) {
+            sortedEntries = getFamily(entries)
+        } else if (selectedDoelgroepen.length == 1 && selectedDoelgroepen.includes('volwassenen')) {
+            sortedEntries = getAdult(entries);
         }else{
-            // entries.forEach(entry =>{
-            //     entrie
-            // });
+            sortedEntries = entries;
+
         }
+        console.log(entries, sortedEntries)
         showResults();
     }
 
-    let getGenres = () => {
+    let countGenres = () => {
         genres = [];
         //Itereren over objecten, haal de beschikbaar genres op en push naar taglist genres
-        entries.forEach(item => {
+        sortedEntries.forEach(item => {
             if (item.genre != undefined) {
                 //Tolowercase en trim gebruikt om de genres die verkeerd geschreven zijn toch te kunnen 'reducen'
                 genres.push(item['genre'].toLowerCase().trim())
             }
         });
-        
         let sortedGenres = genres.reduce(groupBy, {})
-
         function groupBy(acc, genre) {
             const count = acc[genre] || 0;
             return {
