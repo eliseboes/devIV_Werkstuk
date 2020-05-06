@@ -111,18 +111,11 @@ figure img{
     background-color: blue;
 }
 
-.hidden{
-    display: none;
-}
-
 #tags h3{
     margin-top: 30px;
 }
 
-.hidden{
-    display: none;
-}
-
-.visible{
-    display: block;
+#removefilters{
+    cursor: pointer;
+    list-style: none;
 }
