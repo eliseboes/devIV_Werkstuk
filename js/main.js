@@ -14,7 +14,7 @@ $(function () {
         try {
             //Gebruik de async await syntax om de data met 'fetch' op te halen via de URL en om de JSON data hier uit te halen
             //Gebruik de try catch syntax om eventuele errors af te handelen
-            const response = await fetch('/data/entries.json')
+            const response = await fetch('data/entries.json')
             const data = await response.json()
             //Sla entries op in globale variabele
             entries = data.items;
@@ -87,7 +87,7 @@ $(function () {
             }
         }
 
-        $('.tag').click(function () {
+        $('.tag').unbind().click(function () {
             //Check of de tag al geselecteerd is
             if (this.classList.contains('selected')) {
                 //Is geselecteerd, de 'selected' class wordt verwijderd en de array van geselecteerd tags wordt geupdatet
@@ -101,32 +101,20 @@ $(function () {
 
             if (selectedGenres != [] || selectedDoelgroepen != []) {
                 $('#removefilters').show();
-            } else {
-                $('#removefilter').hide();
             }
 
             //Update de resulten en tags wanneer een tag geselecteerd of gedeselecteerd wordt
             filterDoelgroepen();
             showResults();
             countGenres();
-            // showTags(genres);
         })
 
         $('#removefilters').click(function () {
             removeFilters();
+            $(this).hide();
         })
     }
-
-    // let filterGenres = () => {
-    //     sortedEntries.forEach(Entry => {
-    //         selectedGenres.forEach(genre => {
-    //             if (entry.genre != undefined && entry.genre.toLowerCase().trim() == genre) {
-
-    //             }
-    //         });
-    //     });
-    // };
-
+    
     let filterDoelgroepen = () => {
         //Maak de nodige filterfuncties aan 
         const isFamily = entry => entry['age'] != undefined && entry['age'].replace('+', '') < 12;
@@ -186,6 +174,7 @@ $(function () {
         //Steek alle entries opnieuw in de gesorteerde entry lijst en maak de lijst van geselecteerde genres leeg
         sortedEntries = entries;
         selectedGenres = [];
+        selectedDoelgroepen = [];
         $('.tag').removeClass('selected');
         //Calculeer het aantal resultaten opnieuw en toon deze + de entries
         countGenres();

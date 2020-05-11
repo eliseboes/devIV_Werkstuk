@@ -17,7 +17,7 @@ p{
 
 header{
     padding: 20px 0 5px 0;
-    background-image: url('/img/banner_edit.jpg');
+    background-image: url('../img/banner_edit.jpg');
     background-position: 0% 0%;
     background-size: contain;
     min-height: 250px;
