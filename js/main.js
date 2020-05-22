@@ -1,7 +1,6 @@
-'Use strict'
+'Use strict';
 $(function () {
     let entries;
-    let sortedEntries;
     let selectedGenres = [];
     let selectedDoelgroepen = [];
     let genres = [];
@@ -18,10 +17,9 @@ $(function () {
             const data = await response.json()
             //Sla entries op in globale variabele
             entries = data.items;
-            sortedEntries = entries;
-            countGenres();
+            countGenres(entries);
             showTags(genres);
-            showResults();
+            showResults(entries);
         } catch (err) {
             console.log(err)
             throw new Error(`could not fetch data ${err}`);
@@ -52,16 +50,14 @@ $(function () {
         </li>
         `)
     }
-
-    let showResults = () => {
+    let showResults = sortedEntries => {
         $('#results').empty();
         let resultElement = document.getElementById('results');
-        //TODO EFFICIËNTER SCHRIJVEN
         sortedEntries.forEach(entry => {
             selectedGenres.forEach(genre => {
-                if (entry.genre != undefined && entry.genre.toLowerCase().trim() == genre) {
+                if (entry['genre-v2'] == genre) {
                     let videoImg = entry.thumbnail.url;
-                    resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry.genre}>
+                    resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry['genre-v2']}>
             <img src=${videoImg}>
               <figcaption>
                   <h3>${entry.name}</3>
@@ -69,12 +65,9 @@ $(function () {
                   <p>${entry['video-length']}</p>
               </figcaption>
             </figure>`)
-
                 }
             });
         });
-        //TO DO/ EFFICIËNTER SCHRIJVEN
-        //ALS KLIK OP DOELGROEPTAG OF GENRETAG ZELFDE FUNCTIE OPROEPEN?
         let updateTags = (state, classList) => {
             if (state == 'on' && classList[0] == 'doelgroep') {
                 selectedDoelgroepen.push(classList[1])
@@ -91,13 +84,12 @@ $(function () {
             //Check of de tag al geselecteerd is
             if (this.classList.contains('selected')) {
                 //Is geselecteerd, de 'selected' class wordt verwijderd en de array van geselecteerd tags wordt geupdatet
-                this.classList.remove('selected');
                 updateTags('off', this.classList);
             } else {
                 //Is niet geselecteerd, de 'selected' class wordt toegevoegd en de array van geselecteerd tags wordt geupdatet
-                this.classList.add('selected');
                 updateTags('on', this.classList);
             }
+            $(this).toggleClass('selected');
 
             if (selectedGenres != [] || selectedDoelgroepen != []) {
                 $('#removefilters').show();
@@ -105,8 +97,6 @@ $(function () {
 
             //Update de resulten en tags wanneer een tag geselecteerd of gedeselecteerd wordt
             filterDoelgroepen();
-            showResults();
-            countGenres();
         })
 
         $('#removefilters').click(function () {
@@ -116,14 +106,13 @@ $(function () {
     }
     
     let filterDoelgroepen = () => {
+        let sortedEntries = [];
         //Maak de nodige filterfuncties aan 
-        const isFamily = entry => entry['age'] != undefined && entry['age'].replace('+', '') < 12;
         const getFamily = entries => (
-            entries.filter(isFamily)
+            entries.filter(entry => entry.category == 'familie')
         )
-        const isAdult = entry => entry['age'] == undefined || entry['age'].replace('+', '') >= 12;
         const getAdult = entries => (
-            entries.filter(isAdult)
+            entries.filter(entry => entry.category == 'volwassenen')
         )
         //Check of de lijst geselecteerde doelgroepen de nodige tag bevat en filter de resultaten
         if (selectedDoelgroepen.length == 1 && selectedDoelgroepen.includes('iedereen')) {
@@ -134,20 +123,17 @@ $(function () {
             //Bij geen of beide doelgroepen geselecteerd: Steek alle entries opnieuw in de lijst van gesorteerde entries
             sortedEntries = entries;
         }
-        showResults();
+        showResults(sortedEntries);
+        countGenres(sortedEntries);
     }
 
-    let countGenres = () => {
-        //Filter de entries, haal de gesorteerde genres op en map de resultaten naar een nieuwe array
-        const filteredEntries = sortedEntries.filter(
-            entry => entry.genre != undefined
-        );
-        const correctedFilteredEntries = filteredEntries.map(entry => {
-            return entry.genre.toLowerCase().trim()
+    let countGenres = sortedEntries => {
+        const filteredEntries = sortedEntries.map(entry => {
+            return entry['genre-v2']
         })
 
         //Reduce door te controleren hoeveel keer een genre voorkomt in de array van gesorteerde genres
-        const reducedGenres = correctedFilteredEntries.reduce(groupBy, {})
+        const reducedGenres = filteredEntries.reduce(groupBy, {})
         function groupBy(acc, genre) {
             const count = acc[genre] || 0;
             return {
@@ -160,24 +146,19 @@ $(function () {
     }
 
     let updateCount = () => {
+        //Verander de tekst in de tags van het vorige aantal naar het huidige aantal
         Object.entries(genres).forEach(genre => {
             $(`.tag.${genre[0]} .amount`).text(`${genre[1]}`);
         })
     }
 
-    //Zet alle genres om naar kleine letters en trim de whitespace om ze te kunnen reducen
-    let wordToLowercase = (word) => {
-        return word.toLowerCase().trim();
-    }
-
     let removeFilters = () => {
         //Steek alle entries opnieuw in de gesorteerde entry lijst en maak de lijst van geselecteerde genres leeg
-        sortedEntries = entries;
         selectedGenres = [];
         selectedDoelgroepen = [];
         $('.tag').removeClass('selected');
         //Calculeer het aantal resultaten opnieuw en toon deze + de entries
-        countGenres();
-        showResults();
+        countGenres(entries);
+        showResults(entries);
     }
 });
