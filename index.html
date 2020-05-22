@@ -12,10 +12,18 @@
 <body>
     <header>
         <h1>Podium aan huis</h1>
-        <div id="error"></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#tovideos">Video's</a></li>
+                <li><a href="#over">Over</a></li>
+            </ul>
+        </nav>
     </header>
+    <div id="banner">
+    </div>
     <main>
-        <section id="intro">
+        <section id="intro" class="container">
             <h2>Haal voorstellingen naar je</h2>
             <h2>huiskamer</h2>
             <p>Bekijk gratis opnames van straffe podiumvoorstellingen voor jong en oud. Elke dag komen er nieuwe bij.
@@ -24,22 +32,37 @@
                 onbereikbaar. Geen nood, want als de zalen moeten sluiten, dan komt de voorstelling gewoon naar je toe.
                 Veel kijkplezier!</p>
         </section>
-        <section id="tags">
-            <nav>
-                <h3>Doelgroep</h3>
-                <ul id="doelgroepentags">
-                </ul>
-            </nav>
-            <nav>
-                <h3>Genre</h3>
-                <ul id="genretags">
-                </ul>
-            </nav>
-            <li id="removefilters">Remove filters</li>
+        <span id="tovideos"></span>
+        <section id="results-wrapper">
+            <section id="tags" class="container">
+                <nav>
+                    <h3>Doelgroep</h3>
+                    <ul id="doelgroepentags">
+                    </ul>
+                </nav>
+                <nav>
+                    <h3>Genre</h3>
+                    <ul id="genretags">
+                    </ul>
+                </nav>
+                <li id="removefilters">Remove filters</li>
+            </section>
+            <section id="results" class="container"></section>
         </section>
-        <div id="results"></div>
     </main>
-    </div>
+    <section id="over">
+        <h2> Over dit initiatief</h2>
+        <p>Podium Aan Huis is een tijdelijk platform met een bundeling van podiumvoorstellingen uit Vlaanderen en
+            Brussel voor jong en oud. Dagelijks komen er nieuwe voorstellingen bij. Door de coronacrisis is de magie
+            van de live beleving even onbereikbaar. Honderden voorstellingen zijn geannuleerd nu cultuurhuizen
+            moeten sluiten. Via dit platform kan je tijdelijk toch genieten van straffe podiumvoorstellingen tot 31
+            augustus. In september hopen we iedereen massaal in de zalen terug te verwelkomen.
+            Dit platform is een initiatief van Cultuurconnect, in samenwerking met gezelschappen en cultuurhuizen.
+            Cultuurconnect ondersteunt cultuurhuizen, bibliotheken, overheden, technologiespelers en artistieke
+            initiatieven in hun digitale innovatie en dienstverlening. Cultuurconnect evalueert het project in een
+            ruimer onderzoekstraject over artistieke digitale content.</p>
+        </h2>
+    </section>
     <script src="https://code.jquery.com/jquery-3.5.0.min.js"
         integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
     <script type="module" src="js/main.js"></script>

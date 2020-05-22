@@ -3,7 +3,6 @@ $(function () {
     let entries;
     let selectedGenres = [];
     let selectedDoelgroepen = [];
-    let genres = [];
 
     //Roep de gewenste functies aan bij het laden van de pagina
     fetchData();
@@ -18,7 +17,8 @@ $(function () {
             //Sla entries op in globale variabele
             entries = data.items;
             countGenres(entries);
-            showTags(genres);
+            const cumulatedGenres = countGenres(entries);
+            showTags(cumulatedGenres);
             showResults(entries);
         } catch (err) {
             console.log(err)
@@ -50,6 +50,7 @@ $(function () {
         </li>
         `)
     }
+    //Toon de gesorteerde entries
     let showResults = sortedEntries => {
         $('#results').empty();
         let resultElement = document.getElementById('results');
@@ -104,7 +105,7 @@ $(function () {
             $(this).hide();
         })
     }
-    
+
     let filterDoelgroepen = () => {
         let sortedEntries = [];
         //Maak de nodige filterfuncties aan 
@@ -124,7 +125,8 @@ $(function () {
             sortedEntries = entries;
         }
         showResults(sortedEntries);
-        countGenres(sortedEntries);
+        let cumulatedGenres = countGenres(sortedEntries);
+        updateCount(cumulatedGenres);
     }
 
     let countGenres = sortedEntries => {
@@ -141,11 +143,10 @@ $(function () {
                 [genre]: count + 1
             }
         }
-        genres = reducedGenres;
-        updateCount();
+        return reducedGenres;
     }
 
-    let updateCount = () => {
+    let updateCount = (genres) => {
         //Verander de tekst in de tags van het vorige aantal naar het huidige aantal
         Object.entries(genres).forEach(genre => {
             $(`.tag.${genre[0]} .amount`).text(`${genre[1]}`);
@@ -161,4 +162,9 @@ $(function () {
         countGenres(entries);
         showResults(entries);
     }
+
+    // //TESTS
+    // test('Er zijn meer genres theater dan concert', () => {
+    //     expect(countGenres([concert, muziektheater, theater, theater, concert, theater])).toBe({'concert': 2, 'muziektheater': 1, 'theater': 3});
+    //   });
 });
