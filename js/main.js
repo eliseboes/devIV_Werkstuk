@@ -16,6 +16,7 @@ $(function () {
             const data = await response.json()
             //Sla entries op in globale variabele
             entries = data.items;
+            //Voer de functies uit voor alle opgeslagen entries
             countGenres(entries);
             const cumulatedGenres = countGenres(entries);
             showTags(cumulatedGenres);
@@ -27,13 +28,13 @@ $(function () {
         } finally {}
     }
 
-    let showTags = sortedGenres => {
+    const showTags = sortedGenres => {
         //Haal HTML-elementen op
         const resultElement = document.getElementById('results');
         const genreTagElement = document.getElementById('genretags');
         const doelgroepenTagElement = document.getElementById('doelgroepentags');
         //Loop over de 'key' en 'value' pairs van de gesorteerde lijst
-        //Insert HTML elementen met properties uit de entry objecten (geselecteerde genre en aantal)
+        //Insert HTML elementen met properties uit de entry objecten (geselecteerde genre/key en aantal/value)
         Object.entries(sortedGenres).forEach(genre =>
             genreTagElement.insertAdjacentHTML('beforeend', `<li class='genre ${genre[0]} tag'>
             ${genre[0]}
@@ -52,13 +53,13 @@ $(function () {
         `)
     }
     //Toon de gesorteerde entries
-    let showResults = sortedEntries => {
+    const showResults = sortedEntries => {
         $('#results').empty();
         const resultElement = document.getElementById('results');
         sortedEntries.forEach(entry => {
             let videoImg = entry.thumbnail.url;
-            resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry['genre-v2']}>
-           <div class="img-wrapper"> <img src=${videoImg}>
+            resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry['genre-v2']} ${entry.category}>
+           <div class="img-wrapper"> <img src=${videoImg}><span class="age"></span>
            <span class="genre-disp">${entry['genre-v2']}</span></div>
               <figcaption>
                   <h3>${entry.name}</3>
@@ -68,7 +69,8 @@ $(function () {
             </figure>`)
         });
 
-        //Update de arrays van geselecteerd tags aan de hand van de status (geselecteerd of niet) en het type (doelgroep of genre)
+        //Het item wordt in array geplaatst of eruit gehaald
+        //aan de hand van de status (geselecteerd of niet) en het type (doelgroep of genre)
         let updateTags = (state, classList) => {
             if (state == 'on' && classList[0] == 'doelgroep') {
                 selectedDoelgroepen.push(classList[1])
@@ -92,6 +94,7 @@ $(function () {
             }
             $(this).toggleClass('selected');
 
+            //Als eender welke lijst van filters niet leeg is, verschijnt de 'remove tags' link
             if (selectedGenres != [] || selectedDoelgroepen != []) {
                 $('#removefilters').show();
             }
@@ -106,7 +109,7 @@ $(function () {
         })
     }
 
-    let filterDoelgroepen = () => {
+    const filterDoelgroepen = () => {
         let sortedEntries = [];
         //Maak de nodige filterfuncties aan 
         const getFamily = entries => (
@@ -125,27 +128,31 @@ $(function () {
             sortedEntries = entries;
         }
 
-        //Filter enkel doelgroepen of genres aan de hand van de lengte van de array 'selectedGenres'
+        //Filter enkel doelgroepen of ook genres aan de hand van de lengte van de array 'selectedGenres'
         if (selectedGenres.length == 0) {
             showResults(sortedEntries);
         } else {
             filterGenres(sortedEntries);
         }
 
-        let cumulatedGenres = countGenres(sortedEntries);
-
+        const cumulatedGenres = countGenres(sortedEntries);
             //Nodige error handling wanneer de aantallen niet geüpdatet kunnen worden
-        try{updateCount(cumulatedGenres)}catch(err){
+        try{
+            updateCount(cumulatedGenres)
+        }
+        catch(err){
             console.log(`Update count: ${err}`)
         };
     }
 
     //Filter de entries aan de hand van de geselecteerde genres
-    let filterGenres = sortedEntries => {
+    const filterGenres = sortedEntries => {
         $('.figure').hide();
         const sortedByGenre = [];
+        //Loop over alle entries en genres
         sortedEntries.forEach(entry => {
             selectedGenres.forEach(genre => {
+                //Als het geselecteerde genre gelijk is aan de value genre-v2 van het entry object, sla deze dan op in de gesorteerde entry lijst
                 if (entry['genre-v2'] == genre) {
                     sortedByGenre.push(entry);
                 }
@@ -154,7 +161,9 @@ $(function () {
         showResults(sortedByGenre);
     }
 
-    let countGenres = sortedEntries => {
+    const countGenres = sortedEntries => {
+        //Maak een array 'filteredEntries' aan en
+        //Bewaar enkel het 'genre-v2' property van de entry objecten in deze array
         const filteredEntries = sortedEntries.map(entry => {
             return entry['genre-v2']
         })
@@ -172,7 +181,7 @@ $(function () {
         return reducedGenres;
     }
 
-    let updateCount = (genres) => {
+    const updateCount = (genres) => {
         //Reset waarde van aantal entries per genre
         $('.tag.genre .amount').text('0');
         //Verander de tekst in de tags van het vorige aantal naar het huidige aantal
@@ -181,23 +190,27 @@ $(function () {
         })
     }
 
-    let removeFilters = () => {
+   const removeFilters = () => {
         //Steek alle entries opnieuw in de gesorteerde entry lijst en maak de lijst van geselecteerde genres leeg
         selectedGenres = [];
         selectedDoelgroepen = [];
         $('.tag').removeClass('selected');
         //Calculeer het aantal resultaten opnieuw en toon deze + de entries
-        countGenres(entries);
+        try{
+            countGenres(entries);
+        }catch(err){
+            console.log(`Update count: ${err}`)
+        };
         showResults(entries);
     }
 
-    let searchResults = entries => {
+    const searchResults = entries => {
         //Wanneer de waarde in het searchveld verandert
         $('#searchvideos').unbind().on('keyup', function () {
             //Maak een nieuwe array voor de gefilterde entries aan
             const searchResults = [];
             const searchInput = $(this).val();
-            //Vergelijk of de waarde in het invulveld gelijk is aan een waarde binnen de values van alle entries
+            //Vergelijk of de waarde in het invulveld gelijk is aan een waarde binnen de values van alle entry objecten
             entries.forEach(entry => {
                 Object.values(entry).forEach(value => {
                     if (typeof (value) == 'string' && value.includes(searchInput)) {
