@@ -54,18 +54,21 @@ $(function () {
     //Toon de gesorteerde entries
     let showResults = sortedEntries => {
         $('#results').empty();
-        let resultElement = document.getElementById('results');
+        const resultElement = document.getElementById('results');
         sortedEntries.forEach(entry => {
             let videoImg = entry.thumbnail.url;
             resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry['genre-v2']}>
-            <img src=${videoImg}>
+           <div class="img-wrapper"> <img src=${videoImg}>
+           <span class="genre-disp">${entry['genre-v2']}</span></div>
               <figcaption>
                   <h3>${entry.name}</3>
-                  <p>${entry.excerpt}</p>
-                  <p>${entry['video-length']}</p>
+                  <p class="description">${entry.excerpt}</p>
+                  <p class="video-length">${entry['video-length']}</p>
               </figcaption>
             </figure>`)
         });
+
+        //Update de arrays van geselecteerd tags aan de hand van de status (geselecteerd of niet) en het type (doelgroep of genre)
         let updateTags = (state, classList) => {
             if (state == 'on' && classList[0] == 'doelgroep') {
                 selectedDoelgroepen.push(classList[1])
@@ -122,6 +125,7 @@ $(function () {
             sortedEntries = entries;
         }
 
+        //Filter enkel doelgroepen of genres aan de hand van de lengte van de array 'selectedGenres'
         if (selectedGenres.length == 0) {
             showResults(sortedEntries);
         } else {
@@ -129,10 +133,16 @@ $(function () {
         }
 
         let cumulatedGenres = countGenres(sortedEntries);
-        updateCount(cumulatedGenres);
+
+            //Nodige error handling wanneer de aantallen niet geüpdatet kunnen worden
+        try{updateCount(cumulatedGenres)}catch(err){
+            console.log(`Update count: ${err}`)
+        };
     }
 
+    //Filter de entries aan de hand van de geselecteerde genres
     let filterGenres = sortedEntries => {
+        $('.figure').hide();
         const sortedByGenre = [];
         sortedEntries.forEach(entry => {
             selectedGenres.forEach(genre => {
@@ -163,6 +173,8 @@ $(function () {
     }
 
     let updateCount = (genres) => {
+        //Reset waarde van aantal entries per genre
+        $('.tag.genre .amount').text('0');
         //Verander de tekst in de tags van het vorige aantal naar het huidige aantal
         Object.entries(genres).forEach(genre => {
             $(`.tag.${genre[0]} .amount`).text(`${genre[1]}`);
@@ -179,29 +191,22 @@ $(function () {
         showResults(entries);
     }
 
-    let searchResults = entries =>{
+    let searchResults = entries => {
         //Wanneer de waarde in het searchveld verandert
-        $('#searchvideos').unbind().on('keyup', function(){
+        $('#searchvideos').unbind().on('keyup', function () {
             //Maak een nieuwe array voor de gefilterde entries aan
             const searchResults = [];
             const searchInput = $(this).val();
             //Vergelijk of de waarde in het invulveld gelijk is aan een waarde binnen de values van alle entries
-            entries.forEach(entry =>{
-                Object.values(entry).forEach(value =>{
-                    if(typeof(value) == 'string' && value.includes(searchInput)){
-                       // console.log(value)
-                      // console.log(value.includes(searchInput))
-                         searchResults.push(entry);
-                            
-                        }
+            entries.forEach(entry => {
+                Object.values(entry).forEach(value => {
+                    if (typeof (value) == 'string' && value.includes(searchInput)) {
+                        searchResults.push(entry);
+                    }
                 })
             })
+            //Toon de opnieuw gefilterde resultaten
             showResults(searchResults);
         });
     }
-
-    // //TESTS
-    // test('Er zijn meer genres theater dan concert', () => {
-    //     expect(countGenres([concert, muziektheater, theater, theater, concert, theater])).toBe({'concert': 2, 'muziektheater': 1, 'theater': 3});
-    //   });
 });
