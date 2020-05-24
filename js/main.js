@@ -20,6 +20,7 @@ $(function () {
             const cumulatedGenres = countGenres(entries);
             showTags(cumulatedGenres);
             showResults(entries);
+            searchResults(entries);
         } catch (err) {
             console.log(err)
             throw new Error(`could not fetch data ${err}`);
@@ -176,6 +177,27 @@ $(function () {
         //Calculeer het aantal resultaten opnieuw en toon deze + de entries
         countGenres(entries);
         showResults(entries);
+    }
+
+    let searchResults = entries =>{
+        //Wanneer de waarde in het searchveld verandert
+        $('#searchvideos').unbind().on('keyup', function(){
+            //Maak een nieuwe array voor de gefilterde entries aan
+            const searchResults = [];
+            const searchInput = $(this).val();
+            //Vergelijk of de waarde in het invulveld gelijk is aan een waarde binnen de values van alle entries
+            entries.forEach(entry =>{
+                Object.values(entry).forEach(value =>{
+                    if(typeof(value) == 'string' && value.includes(searchInput)){
+                       // console.log(value)
+                      // console.log(value.includes(searchInput))
+                         searchResults.push(entry);
+                            
+                        }
+                })
+            })
+            showResults(searchResults);
+        });
     }
 
     // //TESTS

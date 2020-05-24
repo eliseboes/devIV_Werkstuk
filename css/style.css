@@ -74,6 +74,10 @@ h2 {
     margin-top: 30px;
 }
 
+#tags nav{
+    float: left;
+}
+
 a {
     text-decoration: none;
     color: #fff;
@@ -130,7 +134,35 @@ nav ul li {
 }
 
 #tags h2 {
-    padding: 50px 0 10px 0;
+    width: 100%;
+}
+
+#headertags{
+    display: flex;
+    border-bottom: 3px solid #fff;
+    padding: 5px 0;
+}
+
+#headertags p {
+    color: #fff;
+}
+
+#search {
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+}
+
+#search input{
+    width: 90%;
+    height: 5%;
+    padding: 10px;
+}
+
+#search p{
+    width: 5%;
+    float: right;
+    margin-left: 15px;
 }
 
 #results {
@@ -181,11 +213,13 @@ figcaption {
     cursor: pointer;
     list-style: none;
     color: #fff;
+    font-size: 0.85rem;
+    margin-top: 5px;
 }
 
 #over {
     color: #000;
-    padding: 8%;
+    padding: 10% 8% 8% 8%;
 }
 
 #over p,
