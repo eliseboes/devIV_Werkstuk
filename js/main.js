@@ -12,7 +12,7 @@ $(function () {
         try {
             //Gebruik de async await syntax om de data met 'fetch' op te halen via de URL en om de JSON data hier uit te halen
             //Gebruik de try catch syntax om eventuele errors af te handelen
-            const response = await fetch('data/entries.json')
+            const response = await fetch('../data/entries.json')
             const data = await response.json()
             //Sla entries op in globale variabele
             entries = data.items;
