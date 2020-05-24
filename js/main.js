@@ -55,10 +55,8 @@ $(function () {
         $('#results').empty();
         let resultElement = document.getElementById('results');
         sortedEntries.forEach(entry => {
-            selectedGenres.forEach(genre => {
-                if (entry['genre-v2'] == genre) {
-                    let videoImg = entry.thumbnail.url;
-                    resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry['genre-v2']}>
+            let videoImg = entry.thumbnail.url;
+            resultElement.insertAdjacentHTML('beforeend', `<figure class=${entry['genre-v2']}>
             <img src=${videoImg}>
               <figcaption>
                   <h3>${entry.name}</3>
@@ -66,8 +64,6 @@ $(function () {
                   <p>${entry['video-length']}</p>
               </figcaption>
             </figure>`)
-                }
-            });
         });
         let updateTags = (state, classList) => {
             if (state == 'on' && classList[0] == 'doelgroep') {
@@ -75,7 +71,7 @@ $(function () {
             } else if (state == 'on' && classList[0] == 'genre') {
                 selectedGenres.push(classList[1])
             } else if (state == 'off' && classList[0] == 'doelgroep') {
-                selectedDoelgroepen.splice(selectedGenres.indexOf(classList[1]), 1)
+                selectedDoelgroepen.splice(selectedDoelgroepen.indexOf(classList[1]), 1)
             } else {
                 selectedGenres.splice(selectedGenres.indexOf(classList[1]), 1);
             }
@@ -124,9 +120,27 @@ $(function () {
             //Bij geen of beide doelgroepen geselecteerd: Steek alle entries opnieuw in de lijst van gesorteerde entries
             sortedEntries = entries;
         }
-        showResults(sortedEntries);
+
+        if (selectedGenres.length == 0) {
+            showResults(sortedEntries);
+        } else {
+            filterGenres(sortedEntries);
+        }
+
         let cumulatedGenres = countGenres(sortedEntries);
         updateCount(cumulatedGenres);
+    }
+
+    let filterGenres = sortedEntries => {
+        const sortedByGenre = [];
+        sortedEntries.forEach(entry => {
+            selectedGenres.forEach(genre => {
+                if (entry['genre-v2'] == genre) {
+                    sortedByGenre.push(entry);
+                }
+            });
+        });
+        showResults(sortedByGenre);
     }
 
     let countGenres = sortedEntries => {
@@ -136,6 +150,7 @@ $(function () {
 
         //Reduce door te controleren hoeveel keer een genre voorkomt in de array van gesorteerde genres
         const reducedGenres = filteredEntries.reduce(groupBy, {})
+
         function groupBy(acc, genre) {
             const count = acc[genre] || 0;
             return {
